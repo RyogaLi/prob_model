@@ -1,9 +1,8 @@
 # Predict probabilities of cancer mutations 
 
-### Dependencies
+## Dependencies
 
-### Input
----
+## Input
 **Please goto `./src/conf.py` to change the paths to input files**
 
 ##### Mandatory input files
@@ -23,14 +22,14 @@
     * `chromatin_profile`: the profile to use for the input vcf file
 
 
-### Output
----
+## Output
 
 
 
 
-### RUN
----
+
+## RUN
+
 
 #### Step 0: Preprocess the feature files 
 * 
@@ -41,10 +40,10 @@
 #### Step 2: 
 
 
-### Other functionalities
----
+## Other functionalities
 
 
-### Test
----
+
+## Test
+
 

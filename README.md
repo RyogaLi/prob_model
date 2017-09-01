@@ -44,7 +44,6 @@
 * `Chromatin profile` for different tumour types can be downloaded from [ENCODE project - DNase-seq database](https://www.encodeproject.org/matrix/?type=Experiment&status=released&assay_slims=DNA+accessibility&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&award.project=ENCODE)
 * `Signature` file here is provided by [COSMIC](http://cancer.sanger.ac.uk/cosmic/signatures), other signature files with same format can also be used 
 * Save all the feature files into `./data/`
-* Change the path to files in `./conf.py` if necessary
 
 #### Step 1: Specify all the required file path in `conf.py`
 

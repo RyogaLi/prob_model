@@ -3,6 +3,7 @@
 ### Dependencies
 
 ### Input
+---
 **Please goto `./src/conf.py` to change the paths to input files**
 
 ##### Mandatory input files
@@ -23,11 +24,13 @@
 
 
 ### Output
+---
 
 
 
 
 ### RUN
+---
 
 #### Step 0: Preprocess the feature files 
 * 
@@ -39,7 +42,9 @@
 
 
 ### Other functionalities
+---
 
 
 ### Test
+---
 

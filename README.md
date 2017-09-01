@@ -3,9 +3,6 @@
 ## Dependencies
 
 ## Input
-**Please goto `./src/conf.py` to change the paths to input files**
-
-##### Mandatory input files
 
 1. `VCF file` 
     * File name should follow `tumour_id.vcf`
@@ -32,7 +29,16 @@
 
 
 #### Step 0: Preprocess the feature files 
-* 
+* hg19 file can be obtained from [http://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/]
+    * Use the following command to download all the files into ./features/hg19/
+      
+        ```
+        rsync -avzP rsync://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/ ./annotation/hg19/
+        ```
+    * 
+* mRNA annotation file for hg19 can be downloaded from [http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/all_mrna.txt.gz]
+
+* Run `python ./src/read_files.py -`
 
 
 #### Step 1: Specify all the required file path in `conf.py`

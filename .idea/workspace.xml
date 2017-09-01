@@ -5,29 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98c72e98-0055-498b-a5eb-fe4144e4b4df" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/prob_model.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/analysis/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/analysis/analysis.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/analysis/analyze_vaf.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/phi.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/vaf.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/generate_data/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/generate_data/generate_data.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/read_files.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/conf.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/parse_input_data.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/prob_model.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/read_files.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/read_mixture_file.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/supplementary.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -333,6 +311,14 @@
       <option name="presentableId" value="Default" />
       <updated>1491410399570</updated>
     </task>
+    <task id="LOCAL-00001" summary="updated version">
+      <created>1504289087468</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1504289087468</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -389,6 +375,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="updated version" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated version" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

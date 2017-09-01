@@ -213,8 +213,8 @@ if __name__ == '__main__':
 	if args.chromatin:
 		read_chromatin(chromatin_file)
 
-	print "Processed feature files are saved into: " + feature_data
-	print [i for i in os.listdir(feature_data)]
+	print("Processed feature files are saved into: " + feature_data)
+	print([i for i in os.listdir(feature_data)])
 
 
 	

@@ -28,18 +28,23 @@
 ## RUN
 
 
-#### Step 0: Preprocess the feature files 
-* hg19 file can be obtained from [http://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/]
-    * Use the following command to download all the files into ./features/hg19/
+#### Step 0: Get all the required feature files 
+* `hg19` file can be obtained from [UCSC genome browser](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/)
+    * Use the following command to download all the files into ./data/hg19/
       
         ```
-        rsync -avzP rsync://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/ ./annotation/hg19/
+        rsync -avzP rsync://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/ ./data/hg19/
         ```
-    * 
-* mRNA annotation file for hg19 can be downloaded from [http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/all_mrna.txt.gz]
-
-* Run `python ./src/read_files.py -`
-
+    * concatenate all the fastq files into one using the following command
+        ```
+        gunzip ./data/*
+        cat ./data/* > hg19.fa
+        ```
+* `mRNA` annotation file for hg19 can be downloaded from [UCSC annotated databse](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/all_mrna.txt.gz)
+* `Chromatin profile` for different tumour types can be downloaded from [ENCODE project - DNase-seq database](https://www.encodeproject.org/matrix/?type=Experiment&status=released&assay_slims=DNA+accessibility&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&award.project=ENCODE)
+* `Signature` file here is provided by [COSMIC](http://cancer.sanger.ac.uk/cosmic/signatures), other signature files with same format can also be used 
+* Save all the feature files into `./data/`
+* Change the path to files in `./conf.py` if necessary
 
 #### Step 1: Specify all the required file path in `conf.py`
 

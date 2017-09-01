@@ -1,3 +1,4 @@
+#### Step 0 ####
 # Feature files paths
 mRNA_file = "./data/all_mrna_hg19.txt"
 alex_signature_file = "data/PCAWG_signature_patterns_beta.csv"
@@ -8,7 +9,7 @@ trinuc = "./data/data/trinucleotide.txt"
 
 
 
-
+#### Step 1 ####
 # to run the model on a single vcf file
 vcf_file_name = ""
 

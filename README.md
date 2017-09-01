@@ -1,6 +1,8 @@
-#Predict probabilities of cancer mutations 
+# Predict probabilities of cancer mutations 
 
-## Input
+### Dependencies
+
+### Input
 **Please goto `./src/conf.py` to change the paths to input files**
 
 ##### Mandatory input files
@@ -12,13 +14,32 @@
 
     Example:
     ```
-    sample_name     tumour_type     chromatin_profile   ...
-    tumour_1        BRCA            ENCFF001UVV         ...
+    tumour_id     tumour_type     chromatin_profile     ...
+    tumour_1      BRCA            ENCFF001UVV         ...
     ```
     * The first three columns are mandatory. 
-    * `tumour_id` in the spreadsheet should be the same as the tumour_id in `tumour_id.vcf` file.
+    * `tumour_id`: this should be the same as the title of `tumour_id.vcf`.
     * `chromatin_profile`: the profile to use for the input vcf file
-    
-3. `./features/`: a directory that contains the following files
-    * hg19
-    * 
+
+
+### Output
+
+
+
+
+### RUN
+
+#### Step 0: Preprocess the feature files 
+* 
+
+
+#### Step 1: Specify all the required file path in `conf.py`
+
+#### Step 2: 
+
+
+### Other functionalities
+
+
+### Test
+

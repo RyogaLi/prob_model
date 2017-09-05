@@ -53,6 +53,17 @@ def write_output_to_file(filename, data):
 		for item in data:
 			output.write("%s\n" % item)
 
+def read_tumour_spreadsheet(input_file):
+	"""
+	read the spread sheet and save it into numpy arrray
+	:param input_file: csv file contains tumour names and chromatin file names
+	:return: matrix
+	"""
+
+	with open(input_file, "r") as spreads:
+		for line in spreads:
+			pass
+
 def three_fold_validation():
 	# three fold validation
 	for variants_file in vcf_list[group]:

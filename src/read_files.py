@@ -5,6 +5,7 @@
 # save feature files into pickle files to reduce runtime
 from __future__ import division
 from Bio import SeqIO
+from conf import *
 import numpy as np
 import pickle
 import argparse
@@ -180,38 +181,20 @@ def read_vaf(vaf_file):
 
 if __name__ == '__main__':
 
-	parser = argparse.ArgumentParser(description='Generate feature files')
-	parser.add_argument('-m', '--mRNA', help='mRNA file, all_mRNA_hg19.txt', required=True)
-	#/home/q/qmorris/ryogali/data/all_mrna_hg19.txt
-	parser.add_argument('-s', '--Signatures', help='signature file', required=True)
-	#/home/q/qmorris/ryogali/data/alexSignatures.txt
-	parser.add_argument('-hg', '--humanGenome', help='Human genome file, hg19.fa', required=True)
-	#/home/q/qmorris/ryogali/data/hg19.fa
-	parser.add_argument('-tri', '--trinucleotide', help='trinucleotide file', required=True)
-	#/home/q/qmorris/ryogali/data/trinucleotide.txt
-	parser.add_argument('-c', '--chromatin', help='Chromatin file, cancer type specific', required=False)
-	#/home/q/qmorris/ryogali/data/ENCFF001UVV.bed
-	args = parser.parse_args()
-
-	mRNA_file = args.mRNA
-	trinuc = args.trinucleotide
-	alex_signature_file = args.Signatures
-	hg19_file = args.humanGenome
-
 	chromatin_file = args.chromatin
-	feature_data = "/home/ryogali/data/features/"
-	if not os.path.exists(feature_data):
-		os.makedirs(feature_data)
-	else:
-		shutil.rmtree(feature_data)
-		os.makedirs(feature_data)
+	feature_data = "../data/"
+	# if not os.path.exists(feature_data):
+	# 	os.makedirs(feature_data)
+	# else:
+	# 	shutil.rmtree(feature_data)
+	# 	os.makedirs(feature_data)
 
 	read_mRNA(mRNA_file)
 	read_tri(trinuc)
-	read_alexSignature(alex_signature_file)
+	read_alexSignature(signature_file)
 	read_hg19(hg19_file)
-	if args.chromatin:
-		read_chromatin(chromatin_file)
+	# if args.chromatin:
+	# 	read_chromatin(chromatin_file)
 
 	print("Processed feature files are saved into: " + feature_data)
 	print([i for i in os.listdir(feature_data)])

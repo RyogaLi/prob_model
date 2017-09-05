@@ -301,15 +301,7 @@ if __name__ == '__main__':
 
 	# logging configration
 	parser = argparse.ArgumentParser(description='Predict mutation probabilities')
-	parser.add_argument('-o', '--output', help='output directory', required=True)
-	parser.add_argument('-c', '--chromatin', help='chromatin', required=False)
-	parser.add_argument('--file', help='input file', required=False)
-	parser.add_argument('-i', '--input', help='input directory', required=True)
-	parser.add_argument('-f', '--features', help="feature file path", required=True)
-	parser.add_argument('-m', '--mixture', help='mixture files, associated with test files', required=True)
-	parser.add_argument('-p', '--psub', help='psub file, use to filter out train data', required=False)
-	parser.add_argument('-se', '--signature', help='signature exposure files, associated with train files',
-						required=False)
+	parser.add_argument('-f', '--file', help='To run the model on single vcf file', required=False)
 
 	parser.add_argument('--group', default=-1,type=int, required=False)
 	args = parser.parse_args()
@@ -320,18 +312,18 @@ if __name__ == '__main__':
 	##################################################################
 	##################################################################
 
-	OUTPUTDIR = args.output
-	chromatin = args.chromatin
-	train_prob_dir = os.path.join(OUTPUTDIR, "train_prob/")
-	test_prob_dir = os.path.join(OUTPUTDIR, "test_prob/")
-	random_prob_dir = os.path.join(OUTPUTDIR, "random_prob/")
-	lowsup_prob_dir = os.path.join(OUTPUTDIR, "lowsup_prob/")
-
-	main_logger.info("output files will be saved into: %s", OUTPUTDIR)
+	# OUTPUTDIR = args.output
+	# chromatin = args.chromatin
+	# train_prob_dir = os.path.join(OUTPUTDIR, "train_prob/")
+	# test_prob_dir = os.path.join(OUTPUTDIR, "test_prob/")
+	# random_prob_dir = os.path.join(OUTPUTDIR, "random_prob/")
+	# lowsup_prob_dir = os.path.join(OUTPUTDIR, "lowsup_prob/")
+	#
+	main_logger.info("output files will be saved into: %s", output_dir)
 
 	##################################################################
 	##################################################################
-	feature_data = args.features
+	feature_data = "../data/"
 	try:
 		mRNA_file = load_pickle(os.path.join(feature_data, "mRNA.pickle"))
 		#main_logger.info("mRNA loaded")

@@ -181,8 +181,8 @@ def read_vaf(vaf_file):
 
 if __name__ == '__main__':
 
-	chromatin_file = args.chromatin
-	feature_data = "../data/"
+	# chromatin_file = args.chromatin
+	feature_data = "./data/"
 	# if not os.path.exists(feature_data):
 	# 	os.makedirs(feature_data)
 	# else:

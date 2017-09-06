@@ -62,7 +62,8 @@ def read_tumour_spreadsheet(input_file):
 	spreadsheet = []
 	with open(input_file, "r") as spreads:
 		for line in spreads:
-			spreadsheet.append(line)
+			if "sample_name" not in line:
+				spreadsheet.append(line.split())
 	return spreadsheet
 
 
@@ -235,7 +236,7 @@ def single_file_main():
 
 if __name__ == '__main__':
 	# get logger
-	logging.config.fileConfig("logging.conf")
+	logging.config.fileConfig("src/logging.conf")
 	main_logger = logging.getLogger("main")
 
 
@@ -261,12 +262,13 @@ if __name__ == '__main__':
 	test_prob_dir = os.path.join(output_dir, "test_prob/")
 	random_prob_dir = os.path.join(output_dir, "random_prob/")
 	lowsup_prob_dir = os.path.join(output_dir, "lowsup_prob/")
-	#
+
 	main_logger.info("output files will be saved into: %s", output_dir)
 
 	##################################################################
 	# Load feature files
 	feature_data = "./data/"
+	main_logger.info("Loading required feature files...")
 	try:
 		mRNA_file = load_pickle(os.path.join(feature_data, "mRNA.pickle"))
 		#main_logger.info("mRNA loaded")
@@ -288,13 +290,14 @@ if __name__ == '__main__':
 	# get the tumour name and chromatin profile for this tumour
 	for line in spreadsheet:
 		vcf_file = os.path.join(vcf_file_path, line[0]+".vcf")
-		if line[1] == "N/A":
+		main_logger.info("Processing tumour: %s", vcf_file)
+		if line[2] == "N/A":
 			chromatin_file = 0
-			main_logger.info("No chromatin file specified for this tumour")
+			main_logger.info("No chromatin profile specified for this tumour")
 		else:
-			chromatin_file = os.path.join(chromatin_path, line[1]+".bed")
+			chromatin_file = os.path.join(chromatin_path, line[2]+".bed")
+			main_logger.info("chromatin profile: %s", chromatin_file)
 			chromatin_dict = read_chromatin(chromatin_file)
-
 		break
 		# run model on this vcf file
 

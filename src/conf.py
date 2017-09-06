@@ -8,7 +8,7 @@ trinuc = "./data/trinucleotide.npy"
 
 
 # to run the model on vcf files in a directory (input dir)
-vcf_file_path = "./validated_tumours/"
+vcf_file_path = "validated_tumours"
 
 # tumour type spread sheet
 tumour_type = "tumour_info.csv"

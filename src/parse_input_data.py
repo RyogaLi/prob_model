@@ -233,8 +233,6 @@ class ValidatedVCFParser(object):
 			filter = record.FILTER
 			if filter == []:
 				filter = "PASS"
-			else:
-				filter = "NOTPASS"
 			validated_matrix.append([chromosome, position, filter])
 		validated_matrix = np.asarray(validated_matrix)
 		return validated_matrix

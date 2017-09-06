@@ -5,5 +5,4 @@ gunzip ./data/hg19/*
 cat ./data/hg19/*.fa > ./data/hg19.fa
 rm -rf ./data/hg19/
 
-
 python ./src/read_files.py

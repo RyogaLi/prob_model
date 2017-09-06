@@ -7,6 +7,8 @@ from prob_model import *
 from conf import *
 import os
 import fnmatch
+import subprocess
+
 import argparse
 import logging.config
 
@@ -230,8 +232,25 @@ def three_fold_validation():
 			main_logger.info("DONE-%s-%s",tumour_name, str(i))
 
 def single_file_main():
-	pass
 
+	# get mixture matrix (one file for all the tumours)
+	mixture_matrix = save_as_matrix(mixture_overall)
+	vf = os.path.join(vcf_file_path, vcf_file)
+
+
+
+def validated_file_main():
+	# get tumour name
+	tumour_name = vcf_file.split(".")[0]
+	# get mixture matrix (one file for all the tumours)
+	mixture_matrix = save_as_matrix(mixture_overall)
+	vf = os.path.join(vcf_file_path, vcf_file)
+	# parse input file
+	validated_parser = ValidatedVCFParser(vf)
+	validated_variants = validated_parser._parse()
+
+	# find overlaps between these variants and training data
+	# remove overlaps from validated matrix
 
 
 if __name__ == '__main__':
@@ -239,29 +258,27 @@ if __name__ == '__main__':
 	logging.config.fileConfig("src/logging.conf")
 	main_logger = logging.getLogger("main")
 
-
 	# all mixture in one file
-	mixture_overall = "/home/ryogali/dev/prob_model/data/overall_exposures.sigsBeta2.csv"
+	mixture_overall = "./data/overall_exposures.sigsBeta2.csv"
 
 	# logging configration
 	parser = argparse.ArgumentParser(description='Predict mutation probabilities')
 	parser.add_argument('-f', '--file', help='To run the model on single vcf file', required=False)
+	parser.add_argument("-v", "--validated", help="To run the model on validated (deep sequenced) tumours", required=False)
 
 
 	##################################################################
-	# this argument is used for running the program on different nodes
+	# this argument is used for spreading the program on different nodes
 	parser.add_argument('--group', default=-1,type=int, required=False)
 	args = parser.parse_args()
+
 	##################################################################
 
-
-
-
 	# create directory for different class of variants
-	train_prob_dir = os.path.join(output_dir, "train_prob/")
-	test_prob_dir = os.path.join(output_dir, "test_prob/")
-	random_prob_dir = os.path.join(output_dir, "random_prob/")
-	lowsup_prob_dir = os.path.join(output_dir, "lowsup_prob/")
+	# train_prob_dir = os.path.join(output_dir, "train_prob/")
+	# test_prob_dir = os.path.join(output_dir, "test_prob/")
+	# random_prob_dir = os.path.join(output_dir, "random_prob/")
+	# lowsup_prob_dir = os.path.join(output_dir, "lowsup_prob/")
 
 	main_logger.info("output files will be saved into: %s", output_dir)
 
@@ -283,25 +300,6 @@ if __name__ == '__main__':
 		exit()
 	##################################################################
 
-	##################################################################
-	# read spread sheet
-	spreadsheet = read_tumour_spreadsheet(tumour_type)
-	# for each tumour in the spreadsheet
-	# get the tumour name and chromatin profile for this tumour
-	for line in spreadsheet:
-		vcf_file = os.path.join(vcf_file_path, line[0]+".vcf")
-		main_logger.info("Processing tumour: %s", vcf_file)
-		if line[2] == "N/A":
-			chromatin_file = 0
-			main_logger.info("No chromatin profile specified for this tumour")
-		else:
-			chromatin_file = os.path.join(chromatin_path, line[2]+".bed")
-			main_logger.info("chromatin profile: %s", chromatin_file)
-			chromatin_dict = read_chromatin(chromatin_file)
-		break
-		# run model on this vcf file
-
-
 	all_vcf = os.listdir(vcf_file_path)
 
 	# following code is for paralizing jobs
@@ -313,5 +311,31 @@ if __name__ == '__main__':
 		group = 0
 		vcf_list = [all_vcf]
 	# end
+
+	##################################################################
+	# read spread sheet and run the model
+	spreadsheet = read_tumour_spreadsheet(tumour_type)
+	# for each tumour in the spreadsheet
+	# get the tumour name and chromatin profile for this tumour
+	for line in spreadsheet:
+		tumour_id = line[0]
+		vcf_file = subprocess.check_output('find '+vcf_file_path+' -name '+tumour_id+"*",shell=True)
+		main_logger.info("Processing tumour: %s", vcf_file)
+		main_logger.info("Tumour type: %s", line[1])
+		if line[2] == "N/A":
+			chromatin_file = 0
+			main_logger.info("No chromatin profile specified for this tumour")
+		else:
+			chromatin_file = os.path.join(chromatin_path, line[2]+".bed")
+			main_logger.info("chromatin profile: %s", chromatin_file)
+			chromatin_dict = read_chromatin(chromatin_file)
+		# run model on this vcf file
+		if args.validated == "True":
+			validated_file_main()
+		else:
+			single_file_main()
+	##################################################################
+
+
 
 

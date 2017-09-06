@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-
 rsync -avzP rsync://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/ ./data/hg19/
 
 

@@ -1,10 +1,10 @@
 # supplementary files paths
-mRNA_file = "./data/all_mrna.txt"
-signature_file = "./data/alexSignatures.txt"
-hg19_file = "./data/hg19.fa"
+mRNA_file = "./data/mRNA.pickle"
+signature_file = "./data/signature.npy"
+hg19_file = "./data/hg19.pickle"
 
 # other feature files
-trinuc = "./data/trinucleotide.txt"
+trinuc = "./data/trinucleotide.npy"
 
 
 # to run the model on vcf files in a directory (input dir)

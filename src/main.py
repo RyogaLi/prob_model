@@ -220,6 +220,10 @@ def three_fold_validation():
 
 def one_file_model():
 	# todo extract all mixture files in yulia's directory
+	# todo find overlaps of two version of vcf files
+	# todo train the model on known mutations
+	# todo predict probabilities on new variants(pos, neg, germline)
+
 	# select corresponding validated file
 	# open and read validated file into matrix
 	validated_file_parser = ValidatedVCFParser(validated_file)
@@ -313,22 +317,20 @@ if __name__ == '__main__':
 	# logging configration
 	parser = argparse.ArgumentParser(description='Predict mutation probabilities')
 	parser.add_argument('-f', '--file', help='To run the model on single vcf file', required=False)
-
 	parser.add_argument('--group', default=-1,type=int, required=False)
 	args = parser.parse_args()
-
 	logging.config.fileConfig("logging.conf")
 	main_logger = logging.getLogger("main")
 
 	##################################################################
 	##################################################################
 
-	# OUTPUTDIR = args.output
+	OUTPUTDIR = output_dir
 	# chromatin = args.chromatin
-	# train_prob_dir = os.path.join(OUTPUTDIR, "train_prob/")
-	# test_prob_dir = os.path.join(OUTPUTDIR, "test_prob/")
-	# random_prob_dir = os.path.join(OUTPUTDIR, "random_prob/")
-	# lowsup_prob_dir = os.path.join(OUTPUTDIR, "lowsup_prob/")
+	train_prob_dir = os.path.join(OUTPUTDIR, "train_prob/")
+	test_prob_dir = os.path.join(OUTPUTDIR, "test_prob/")
+	random_prob_dir = os.path.join(OUTPUTDIR, "random_prob/")
+	lowsup_prob_dir = os.path.join(OUTPUTDIR, "lowsup_prob/")
 	#
 	main_logger.info("output files will be saved into: %s", output_dir)
 
@@ -344,12 +346,12 @@ if __name__ == '__main__':
 		#main_logger.info("alex_signature loaded")
 		hg19_file = load_pickle(os.path.join(feature_data,"hg.pickle"))
 		#main_logger.info("hg file loaded")
-		if chromatin == "True":
-			chromatin_file = load_pickle(os.path.join(feature_data, "chromatin.pickle"))
-			#main_logger.info("chromatin loaded")
-		else:
-			#main_logger.info("Chromatin info will not be analyzed")
-			chromatin_file = False
+		# if chromatin == "True":
+		# 	chromatin_file = load_pickle(os.path.join(feature_data, "chromatin.pickle"))
+		# 	#main_logger.info("chromatin loaded")
+		# else:
+		# 	#main_logger.info("Chromatin info will not be analyzed")
+		# 	chromatin_file = False
 	except Exception as error:
 		main_logger.exception("Please provide valid compiled feature data files.")
 		exit()
@@ -358,8 +360,8 @@ if __name__ == '__main__':
 	##################################################################
 
 	input_dir = vcf_file_path  # input vcf files
-	mixture_dir = args.mixture  # input mixture files
-	psub_dir = args.psub  # phi/vaf values associated with each tumor
+	# mixture_dir = args.mixture  # input mixture files
+	# psub_dir = args.psub  # phi/vaf values associated with each tumor
 
 	all_vcf = os.listdir(input_dir)
 

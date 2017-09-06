@@ -59,10 +59,20 @@ def read_tumour_spreadsheet(input_file):
 	:param input_file: csv file contains tumour names and chromatin file names
 	:return: matrix
 	"""
-
+	spreadsheet = []
 	with open(input_file, "r") as spreads:
 		for line in spreads:
-			pass
+			spreadsheet.append(line)
+	return spreadsheet
+
+
+def get_line(title, matrix):
+	"""
+	get a line by title(first element)
+	:param title: 
+	:return: list contains the title and rest of the line 
+	"""
+	return matrix[np.where(matrix[:, 0] == title)]
 
 def three_fold_validation():
 	# three fold validation
@@ -218,125 +228,45 @@ def three_fold_validation():
                                      random_matrix._calculate_proba(random_pa, random_pt, random_ps))
 			main_logger.info("DONE-%s-%s",tumour_name, str(i))
 
-def one_file_model():
-	# todo extract all mixture files in yulia's directory
-	# todo find overlaps of two version of vcf files
-	# todo train the model on known mutations
-	# todo predict probabilities on new variants(pos, neg, germline)
-
-	# select corresponding validated file
-	# open and read validated file into matrix
-	validated_file_parser = ValidatedVCFParser(validated_file)
-	validated_matrix_data = validated_file_parser._parse()
-	# save vcf to matrix based on validated file name
-	file_list = os.listdir(input_dir)
-	vf = ""
-	for file in file_list:
-		if validated_file.split(".")[0] in file:
-			vf = os.path.join(input_dir, validated_file)
-	if vf == "":
-		exit(0)
-	# to do get new mixture here
-	sigs = []
-	mixture = []
-	# convert file to matrix
-	mixture_matrix = save_as_matrix(mixture_overall)
-	# print(mixture_matrix)
-	# print(tumour_name)
-	# select tumor name from the matrix
-	tumor_sig = mixture_matrix[(mixture_matrix[:, 0] == validated_file.split(".")[0]) | (mixture_matrix[:, 0] == "")]
-	# print(tumor_sig)
-	if tumor_sig.shape[0] < 2:
-		exit(0)
-	# select where signatures != 0
-	for i in range(len(tumor_sig[1])):
-		# print(i)
-		if tumor_sig[1][i] != "0":
-			# print(tumor_sig[1][i])
-			sigs.append(tumor_sig[0][i])
-			mixture.append(tumor_sig[1][i])
-	for i in range(len(sigs)):
-		sigs[i] = "Signature " + sigs[i]
-
-	mixture = [float(i) for i in mixture[1:]]
-	# get train and test data from matrix
-	# 3 fold
-	variants_parser = VariantsFileParser(vf, chromatin_file, mRNA_file, hg19_file, trinuc, mixture,
-										 alex_signature_file, sigs)
+def single_file_main():
+	pass
 
 
-	# train on train data
-	test, train, negative = variants_parser._get_input_data(3, validate=True)
-	negative = variants_parser._get_features(negative)
-	# predict on test and negative data
-	for i in range(len(train)):
-		# get features from train data
-		train_data = variants_parser._get_features(train[i])
-		# get features from test data
-		test_data = variants_parser._get_features(test[i])
-
-		# train the model
-		train_matrix = ProbModel(train_data)
-		train_matrix._fit()
-
-		# predict probabilities for train data
-		train_pa, train_pt, train_ps = \
-			train_matrix._predict_proba(train_matrix._mut,
-										train_matrix._tr_X,
-										train_matrix._strand_X,
-										train_matrix._strand)
-		test_matrix = ProbModel(test_data)
-		test_pa, test_pt, test_ps = \
-			train_matrix._predict_proba(test_matrix._mut,
-										test_matrix._tr_X,
-										test_matrix._strand_X,
-										test_matrix._strand)
-		# predict probabilities for low_sup data
-		low_support_matrix = ProbModel(negative)
-		lowsup_pa, lowsup_pt, lowsup_ps = train_matrix._predict_proba(low_support_matrix._mut,
-																	  low_support_matrix._tr_X,
-																	  low_support_matrix._strand_X,
-																	  low_support_matrix._strand)
-
-		# write the probabilities to file
-		write_output_to_file(os.path.join(train_prob_dir,
-										  validated_file) + "." + str(i) + ".train.txt",
-							 train_matrix._calculate_proba(train_pa, train_pt, train_ps))
-		write_output_to_file(os.path.join(test_prob_dir,
-										  validated_file) + "." + str(i) + ".test.txt",
-							 test_matrix._calculate_proba(test_pa, test_pt, test_ps))
-		write_output_to_file(os.path.join(lowsup_prob_dir,
-										  validated_file) + "." + str(i) + ".neg.txt",
-							 low_support_matrix._calculate_proba(lowsup_pa, lowsup_pt, lowsup_ps))
-		main_logger.info("DONE-%s-%s", validated_file, str(i))
 
 if __name__ == '__main__':
+	# get logger
+	logging.config.fileConfig("logging.conf")
+	main_logger = logging.getLogger("main")
+
+
 	# all mixture in one file
 	mixture_overall = "/home/ryogali/dev/prob_model/data/overall_exposures.sigsBeta2.csv"
 
 	# logging configration
 	parser = argparse.ArgumentParser(description='Predict mutation probabilities')
 	parser.add_argument('-f', '--file', help='To run the model on single vcf file', required=False)
+
+
+	##################################################################
+	# this argument is used for running the program on different nodes
 	parser.add_argument('--group', default=-1,type=int, required=False)
 	args = parser.parse_args()
-	logging.config.fileConfig("logging.conf")
-	main_logger = logging.getLogger("main")
-
-	##################################################################
 	##################################################################
 
-	OUTPUTDIR = output_dir
-	# chromatin = args.chromatin
-	train_prob_dir = os.path.join(OUTPUTDIR, "train_prob/")
-	test_prob_dir = os.path.join(OUTPUTDIR, "test_prob/")
-	random_prob_dir = os.path.join(OUTPUTDIR, "random_prob/")
-	lowsup_prob_dir = os.path.join(OUTPUTDIR, "lowsup_prob/")
+
+
+
+	# create directory for different class of variants
+	train_prob_dir = os.path.join(output_dir, "train_prob/")
+	test_prob_dir = os.path.join(output_dir, "test_prob/")
+	random_prob_dir = os.path.join(output_dir, "random_prob/")
+	lowsup_prob_dir = os.path.join(output_dir, "lowsup_prob/")
 	#
 	main_logger.info("output files will be saved into: %s", output_dir)
 
 	##################################################################
-	##################################################################
-	feature_data = "../data/"
+	# Load feature files
+	feature_data = "./data/"
 	try:
 		mRNA_file = load_pickle(os.path.join(feature_data, "mRNA.pickle"))
 		#main_logger.info("mRNA loaded")
@@ -346,24 +276,30 @@ if __name__ == '__main__':
 		#main_logger.info("alex_signature loaded")
 		hg19_file = load_pickle(os.path.join(feature_data,"hg.pickle"))
 		#main_logger.info("hg file loaded")
-		# if chromatin == "True":
-		# 	chromatin_file = load_pickle(os.path.join(feature_data, "chromatin.pickle"))
-		# 	#main_logger.info("chromatin loaded")
-		# else:
-		# 	#main_logger.info("Chromatin info will not be analyzed")
-		# 	chromatin_file = False
 	except Exception as error:
 		main_logger.exception("Please provide valid compiled feature data files.")
 		exit()
-
-	##################################################################
 	##################################################################
 
-	input_dir = vcf_file_path  # input vcf files
-	# mixture_dir = args.mixture  # input mixture files
-	# psub_dir = args.psub  # phi/vaf values associated with each tumor
+	##################################################################
+	# read spread sheet
+	spreadsheet = read_tumour_spreadsheet(tumour_type)
+	# for each tumour in the spreadsheet
+	# get the tumour name and chromatin profile for this tumour
+	for line in spreadsheet:
+		vcf_file = os.path.join(vcf_file_path, line[0]+".vcf")
+		if line[1] == "N/A":
+			chromatin_file = 0
+			main_logger.info("No chromatin file specified for this tumour")
+		else:
+			chromatin_file = os.path.join(chromatin_path, line[1]+".bed")
+			chromatin_dict = read_chromatin(chromatin_file)
 
-	all_vcf = os.listdir(input_dir)
+		break
+		# run model on this vcf file
+
+
+	all_vcf = os.listdir(vcf_file_path)
 
 	# following code is for paralizing jobs
 	if args.group is not None:
@@ -374,16 +310,5 @@ if __name__ == '__main__':
 		group = 0
 		vcf_list = [all_vcf]
 	# end
-
-	##################################################################
-	##################################################################
-	#three_fold_validation()
-	##################################################################
-	##################################################################
-
-	# one file
-	validated_file = args.file
-	one_file_model()
-
 
 

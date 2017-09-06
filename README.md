@@ -1,6 +1,7 @@
 # Predict probabilities of cancer mutations 
 
 ## Dependencies
+- Here we use a universal mixture file to make the prediction. To compute a signature mixture file for each tumour, please goto : [Trackature](https://github.com/YuliaRubanova/Trackature)
 
 ## Input
 

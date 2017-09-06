@@ -63,8 +63,7 @@ def read_chromatin(filename):
 			start_pos = line[1]
 			end_pos = line[2]
 			output[chrom].append((int(start_pos), int(end_pos)))
-	with open(feature_data+"chromatin"+".pickle", 'wb') as handle:
-		pickle.dump(output, handle, protocol=2)
+	return output
 
 
 def read_tri(trinucleotide):

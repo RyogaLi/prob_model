@@ -25,19 +25,6 @@
     * directory that contains all the trained model for tumours
     * filename follows: `tumour_ID.sav`
 
-## Output
-1. Trained model will be saved into `./trained/`
-2. Predicted probabilities will be saved into `./output/`
-    
-    Example:
-    ```
-    mut	    VAF	    prob
-    35      0.7	    0.0171952053899
-    ...
-    ```
-2. To analyse the probability file, please goto `./analysis/`
-
-
 
 
 ## RUN
@@ -58,6 +45,20 @@
 #### Step 1: Specify all the required file path in `conf.py`
 
 #### Step 2: 
+
+
+## Output
+1. Trained model will be saved into `./trained/`
+2. Predicted probabilities will be saved into `./output/`
+    
+    Example:
+    ```
+    mut	    VAF	    prob
+    35      0.7	    0.0171952053899
+    ...
+    ```
+2. To analyse the probability file, please goto `./analysis/`
+
 
 
 ## Other functionalities

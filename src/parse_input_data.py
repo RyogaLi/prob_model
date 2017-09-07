@@ -96,7 +96,7 @@ class VariantsFileParser(object):
 		else:
 			np.random.shuffle(data)
 			total = data.shape[0]
-			# todo separate data into 2:1
+
 			sep = math.floor(total*0.67)
 			train, test = data[:sep,], data[sep:, ]
 		return train, test, low_support
@@ -164,15 +164,16 @@ class VariantsFileParser(object):
 
 				## get signature from overall
 				signature_vector = self._time_points
+				# print(signature_vector)
 				se.append(signature_vector)
 
 				pce = variant_parser._calculate_pce(signature_vector, self._alex_sig, self._signatures, int_type)
+
 				p_ce.append(pce)
 
 		mut_type_one_hot = get_one_hot_encoding(mut_type)
 
 		mut_type = add_colname(np.asarray(mut_type_one_hot), "Mut_type")
-
 		se = add_colname(np.asarray(se), "Exposure")
 		trans_region = add_colname(np.asarray(trans_region), "Transcribed")
 		sense = add_colname(np.asarray(sense), "Strand")
@@ -270,11 +271,7 @@ class VariantParser(object):
 
 		idx = np.where(np.in1d(alex_signature, sigs))
 		select_signature_cols = alex_signature[:,2:][mut_type+1,idx].squeeze()
-		print(alex_signature)
-		print(mut_type)
-		print(select_signature_cols)
-		print(exposure_vector[1:])
-		sum = np.dot(np.asarray(select_signature_cols,dtype=np.float), exposure_vector[1:])
-
+		exposure_vector = [float(i) for i in exposure_vector]
+		sum = np.dot(np.asarray(select_signature_cols,dtype=np.float), exposure_vector)
 		return sum
 

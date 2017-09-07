@@ -61,8 +61,7 @@ class ProbModel(object):
 	def __init__(self, input_matrix):
 		self._input_matrix = input_matrix # whole matrix
 		self._mut_type = get_col("Mut_type", input_matrix) # mut type (one hot encoded)
-		self._exposure = get_col("Exposure", input_matrix) # exposure vecotr
-
+		self._exposure = get_col("Exposure", input_matrix) # exposure vector
 		self._mut = combine_column([self._mut_type, self._exposure]) # combine mut_type and exposure vector for later use
 		self._transregion = get_col("Transcribed", input_matrix) # transcribed
 		self._strand =get_col("Strand", input_matrix) #strand information

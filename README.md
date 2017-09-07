@@ -6,7 +6,7 @@
 ## Input
 
 1. `VCF file` 
-    * File name should follow `tumour_id.vcf`
+    * File name should contain `tumour_id`
     * The INFO field should contain `VAF`
 2. `tumour_info.csv`
 

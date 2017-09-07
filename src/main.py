@@ -253,7 +253,8 @@ def single_file_main():
 			mixture.append(tumor_sig[1][i])
 	for i in range(len(sigs)):
 		sigs[i] = "Signature " + sigs[i]
-	variants_parser = VariantsFileParser(vcf_file, chromatin_dict, mRNA_file, hg19_file, trinuc, mixture,
+
+	variants_parser = VariantsFileParser(vcf_file, chromatin_dict, mRNA_file, hg19_file, trinuc, mixture[1:],
 										 alex_signature_file, sigs)
 	# get input data to the model
 	# n = n fold validation, 1/n as train data and 2/n as test data
@@ -288,9 +289,9 @@ def single_file_main():
 									test_matrix._strand)
 
 	# write output to output directory
-	write_output_to_file(os.path.join(output_dir, tumour_id) + "." + ".train.txt",
+	write_output_to_file(os.path.join(output_dir, tumour_id) + ".train.txt",
 						 train_matrix._calculate_proba(train_pa, train_pt, train_ps))
-	write_output_to_file(os.path.join(output_dir, tumour_id) + "." + ".test.txt",
+	write_output_to_file(os.path.join(output_dir, tumour_id) + ".test.txt",
 						 test_matrix._calculate_proba(test_pa, test_pt, test_ps))
 
 

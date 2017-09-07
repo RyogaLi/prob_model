@@ -235,8 +235,63 @@ def single_file_main():
 
 	# get mixture matrix (one file for all the tumours)
 	mixture_matrix = save_as_matrix(mixture_overall)
-	vf = os.path.join(vcf_file_path, vcf_file)
 
+	# select mixture for this tumour from mixture matrix
+	tumor_sig = mixture_matrix[(mixture_matrix[:, 0] == tumour_id) | (mixture_matrix[:, 0] == "")]
+	# if tumour not found in the matrix, skip this tumour
+	if tumor_sig.shape[0] < 2:
+		main_logger.info("No mixture found for tumour: %s", tumour_id)
+		return
+	# select where signatures != 0
+	sigs = []
+	mixture = []
+	for i in range(len(tumor_sig[1])):
+		# print(i)
+		if tumor_sig[1][i] != "0":
+			# print(tumor_sig[1][i])
+			sigs.append(tumor_sig[0][i])
+			mixture.append(tumor_sig[1][i])
+	for i in range(len(sigs)):
+		sigs[i] = "Signature " + sigs[i]
+	variants_parser = VariantsFileParser(vcf_file, chromatin_dict, mRNA_file, hg19_file, trinuc, mixture,
+										 alex_signature_file, sigs)
+	# get input data to the model
+	# n = n fold validation, 1/n as train data and 2/n as test data
+	# low support data are those mutations that has FILTER = LOWSUPPORT
+	# if n == 0, train and test data = 2:1
+	test, train, low_support = variants_parser._get_input_data()
+
+	# train the model using training data
+	train_data = variants_parser._get_features(train)
+	train_matrix = ProbModel(train_data)
+	train_matrix._fit()
+
+	# save the model to disk
+	filename = tumour_id+"_trained.sav"
+	pickle.dump(train_matrix, open(filename, 'wb'))
+
+
+	# for test data
+	test_data = variants_parser._get_features(test)
+	test_matrix = ProbModel(test_data)
+
+	# compute probabilities for train and test data
+	train_pa, train_pt, train_ps = \
+		train_matrix._predict_proba(train_matrix._mut,
+									train_matrix._tr_X,
+									train_matrix._strand_X,
+									train_matrix._strand)
+	test_pa, test_pt, test_ps = \
+		train_matrix._predict_proba(test_matrix._mut,
+									test_matrix._tr_X,
+									test_matrix._strand_X,
+									test_matrix._strand)
+
+	# write output to output directory
+	write_output_to_file(os.path.join(output_dir, tumour_id) + "." + ".train.txt",
+						 train_matrix._calculate_proba(train_pa, train_pt, train_ps))
+	write_output_to_file(os.path.join(output_dir, tumour_id) + "." + ".test.txt",
+						 test_matrix._calculate_proba(test_pa, test_pt, test_ps))
 
 
 def validated_file_main():
@@ -315,11 +370,15 @@ if __name__ == '__main__':
 	##################################################################
 	# read spread sheet and run the model
 	spreadsheet = read_tumour_spreadsheet(tumour_type)
-	# for each tumour in the spreadsheet
-	# get the tumour name and chromatin profile for this tumour
+
 	for line in spreadsheet:
+		# main_logger.info("================================================")
 		tumour_id = line[0]
 		vcf_file = subprocess.check_output('find '+vcf_file_path+' -name '+tumour_id+"*",shell=True)
+		vcf_file = vcf_file.strip()
+		if vcf_file =="":
+			continue
+
 		main_logger.info("Processing tumour: %s", vcf_file)
 		main_logger.info("Tumour type: %s", line[1])
 		if line[2] == "N/A":

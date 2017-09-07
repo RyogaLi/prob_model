@@ -5,7 +5,7 @@ from __future__ import division
 from sklearn.model_selection import KFold
 from prob_model import *
 import vcf
-
+import math
 np.random.seed(1)
 
 def get_one_hot_encoding(matrix):
@@ -55,8 +55,9 @@ class VariantsFileParser(object):
 		low_sup_matrix = []
 		vcf_reader = vcf.Reader(open(self._filename))
 		for record in vcf_reader:
+
 			if "VAF" in record.INFO.keys():
-				record.INFO["VAF"][0] = float(record.INFO["VAF"][0]) * 2
+				record.INFO["VAF"] = float(record.INFO["VAF"]) * 2
 			else:
 				continue
 
@@ -67,36 +68,6 @@ class VariantsFileParser(object):
 		matrix = np.asarray(matrix)
 		low_sup_matrix = np.asarray(low_sup_matrix)
 		return matrix, low_sup_matrix
-
-	def _read_from_validated_data(self, validated_matrix):
-		"""
-		separate data based on validated_matrix
-		if filter == PASS: train/test
-		else: negative
-		:param validated_matrix: a matrix containing chr|pos|filter read from validated vcfs
-		:return: matrix, negative
-		"""
-		self._validated_matrix = validated_matrix
-		matrix = []
-		negative_matrix = []
-		vcf_reader = vcf.Reader(open(self._filename))
-		for record in vcf_reader:
-			chr = "chr"+record.CHROM
-			pos = record.POS-1
-			entry = validated_matrix[np.where((validated_matrix[:,0]==chr)*(validated_matrix[:,1]==pos))]
-			if len(entry) == 0:
-				continue
-			else:
-				filter = entry[0][-1]
-			if "VAF" in record.INFO.keys():
-				record.INFO["VAF"][0] = float(record.INFO["VAF"][0]) * 2
-			else:
-				continue
-			if filter == "PASS":
-				matrix.append(record)
-			else:
-				negative_matrix.append(record)
-		return matrix, negative_matrix
 
 	def _nfold_shuffle(self, matrix, n):
 		"""
@@ -110,19 +81,24 @@ class VariantsFileParser(object):
 			test.append(matrix[test_index])
 		return train, test
 
-	def _get_input_data(self, n, validate=False):
+	def _get_input_data(self, n=0, validate=False):
 		"""
 		read variants file and separate train, test, lowsupport data
 		:param n: n-fold cross validation
 		:return: train, test, lowsupport
 		"""
-		if validate:
-			data, low_support = self._read_from_validated_data(self._validated_matrix)
+		data, low_support = self._save_as_matrix()
+		# you can choose n fold validation
+		if n != 0:
+			train, test = self._nfold_shuffle(data, n)
+
+		# if n == 0, train and test data = 2:1 (DEFAULT)
 		else:
-			data, low_support = self._save_as_matrix()
-
-		train, test = self._nfold_shuffle(data, n)
-
+			np.random.shuffle(data)
+			total = data.shape[0]
+			# todo separate data into 2:1
+			sep = math.floor(total*0.67)
+			train, test = data[:sep,], data[sep:, ]
 		return train, test, low_support
 
 	def _get_features(self, input_data):
@@ -175,7 +151,7 @@ class VariantsFileParser(object):
 
 				mut_type.append(int_type)
 
-				VAF = float(record.INFO["VAF"][0])
+				VAF = float(record.INFO["VAF"])
 				VAF_list.append(VAF)
 
 
@@ -212,9 +188,6 @@ class VariantsFileParser(object):
 		return combine_column([mut_type, se, trans_region, sense, chromatin, p_ce, VAF_list])
 
 
-#todo finish this based on validated data
-#todo find overlapped variants
-#todo find VAF
 class ValidatedVCFParser(object):
 
 	def __init__(self, filename):
@@ -284,24 +257,6 @@ class VariantParser(object):
 				end = mid - 1
 		return None
 
-	# def _get_overlap(self, phi_values_matrix):
-	# 	"""
-	# 	find out if the variant has VAF value
-	# 	:param phi_values_matrix: matrix contains chr_pos = phi/vaf value
-	# 	:return:
-	# 	"""
-	# 	# not used
-	# 	# todo change here
-	# 	combine_pos = self._variant.CHROM + "_" + str(self._variant.POS)
-	# 	find = phi_values_matrix[phi_values_matrix[:, 0] == combine_pos]
-	# 	# bool: (train, test, low_sup)
-	# 	if len(find) != 0:
-	# 		return (True, False, False)
-	# 	if self._variant.FILTER == ["LOWSUPPORT"]:
-	# 		return (False, False, True)
-	# 	else:
-	# 		return (False, True, False)
-
 	def _calculate_pce(self, exposure_vector, alex_signature, sigs, mut_type):
 		"""
 		calculate p_ce for a given mutation
@@ -315,7 +270,11 @@ class VariantParser(object):
 
 		idx = np.where(np.in1d(alex_signature, sigs))
 		select_signature_cols = alex_signature[:,2:][mut_type+1,idx].squeeze()
-		sum = np.dot(np.asarray(select_signature_cols,dtype=np.float), exposure_vector)
+		print(alex_signature)
+		print(mut_type)
+		print(select_signature_cols)
+		print(exposure_vector[1:])
+		sum = np.dot(np.asarray(select_signature_cols,dtype=np.float), exposure_vector[1:])
 
 		return sum
 

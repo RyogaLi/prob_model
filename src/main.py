@@ -268,7 +268,7 @@ def single_file_main():
 	train_matrix._fit()
 
 	# save the model to disk
-	filename = tumour_id+"_trained.sav"
+	filename = "./trained/"+ tumour_id+"_trained.sav"
 	pickle.dump(train_matrix, open(filename, 'wb'))
 
 

@@ -5,6 +5,7 @@
 
 ## Input
 
+#### To train the model
 1. `VCF file` 
     * File name should contain `tumour_id`
     * The INFO field should contain `VAF`
@@ -19,9 +20,22 @@
     * `tumour_id`: this should be the same as the title of `tumour_id.vcf`.
     * `chromatin_profile`: the profile to use for the input vcf file
 
+#### Load existing models
+1. `./trained/`
+    * directory that contains all the trained model for tumours
+    * filename follows: `tumour_ID.sav`
 
 ## Output
-
+1. Trained model will be saved into `./trained/`
+2. Predicted probabilities will be saved into `./output/`
+    
+    Example:
+    ```
+    mut	    VAF	    prob
+    35      0.7	    0.0171952053899
+    ...
+    ```
+2. To analyse the probability file, please goto `./analysis/`
 
 
 

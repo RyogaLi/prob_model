@@ -19,13 +19,12 @@
     * The first three columns are mandatory. 
     * `tumour_id`: this should be the same as the title of `tumour_id.vcf`.
     * `chromatin_profile`: the profile to use for the input vcf file
+    * To look up tumour type and DCC project code please goto [icgc](http://docs.icgc.org/submission/projects/)
 
 #### Load existing models
 1. `./trained/`
     * directory that contains all the trained model for tumours
     * filename follows: `tumour_ID.sav`
-
-
 
 ## RUN
 

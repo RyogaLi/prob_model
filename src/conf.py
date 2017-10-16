@@ -9,10 +9,12 @@ trinuc = "./data/trinucleotide.txt"
 #########################################
 
 # to run the model on vcf files in a directory (input dir)
-vcf_file_path = "./test_variants"
+vcf_file_path = "./validated_variants/"
+file_list = "./data/list.txt"
+consensus_path = "./con_variants/"
 
 # tumour type spread sheet
-tumour_type = "tumour_info.csv"
+tumour_type = "./test.txt"
 
 # chroamtin profile directory
 chromatin_path = "./chromatin_profiles"

@@ -8,7 +8,7 @@ import vcf
 import math
 np.random.seed(1)
 
-def get_one_hot_encoding(matrix):
+def get_one_hot_encoding(matrix,max):
 	"""
 	get an one hot encoding matrix with corresponding position = 1
 	matrix is zero indexed
@@ -16,7 +16,7 @@ def get_one_hot_encoding(matrix):
 	output = []
 	for i in matrix:
 		cla = int(i)
-		one_hot = [0] * (max(matrix)+1)
+		one_hot = [0] * max
 		one_hot[cla] = 1
 		output.append(one_hot)
 	output = np.asarray(output)
@@ -55,7 +55,6 @@ class VariantsFileParser(object):
 		low_sup_matrix = []
 		vcf_reader = vcf.Reader(open(self._filename))
 		for record in vcf_reader:
-
 			if "VAF" in record.INFO.keys():
 				record.INFO["VAF"] = float(record.INFO["VAF"]) * 2
 			else:
@@ -88,23 +87,40 @@ class VariantsFileParser(object):
 		:return: train, test, lowsupport
 		"""
 		data, low_support = self._save_as_matrix()
-		# you can choose n fold validation
-		if n != 0:
-			train, test = self._nfold_shuffle(data, n)
-
-		# if n == 0, train and test data = 2:1 (DEFAULT)
+		# print data.shape
+		if validate != False:
+			# germline = []
+			notseen = []
+			passed = []
+			train = []
+			for record in data:
+				chromosome = "chr" + str(record.CHROM)
+				position = record.POS-1
+				validated = validate[np.where((validate[:, 0] == chromosome) * (validate[:, 1] == str(position)))]
+				if validated.shape[0] !=0:
+					if validated[0][2] == "PASS":
+						passed.append(record)
+					else:
+						notseen.append(record)
+				else:
+					train.append(record)
+			return np.asarray(train), np.asarray(passed), np.asarray(notseen)
 		else:
-			np.random.shuffle(data)
-			total = data.shape[0]
-
-			sep = math.floor(total*0.67)
-			train, test = data[:sep,], data[sep:, ]
-		return train, test, low_support
+			# you can choose n fold validation
+			if n != 0:
+				train, test = self._nfold_shuffle(data, n)
+			# if n == 0, train and test data = 2:1 (DEFAULT)
+			else:
+				np.random.shuffle(data)
+				total = data.shape[0]
+				sep = math.floor(total*0.67)
+				train, test = data[:sep,], data[sep:, ]
+			return train, test, low_support
 
 	def _get_features(self, input_data):
 		"""
-		Get all the features from input vcf file
-		:param input_data: vcf file
+		Get all the features from input data
+		:param input_data: 
 		:return:
 		"""
 		chromatin = []
@@ -171,8 +187,7 @@ class VariantsFileParser(object):
 
 				p_ce.append(pce)
 
-		mut_type_one_hot = get_one_hot_encoding(mut_type)
-
+		mut_type_one_hot = get_one_hot_encoding(mut_type, 96)
 		mut_type = add_colname(np.asarray(mut_type_one_hot), "Mut_type")
 		se = add_colname(np.asarray(se), "Exposure")
 		trans_region = add_colname(np.asarray(trans_region), "Transcribed")
@@ -187,6 +202,7 @@ class VariantsFileParser(object):
 
 
 		return combine_column([mut_type, se, trans_region, sense, chromatin, p_ce, VAF_list])
+
 
 
 class ValidatedVCFParser(object):
@@ -207,9 +223,13 @@ class ValidatedVCFParser(object):
 			filter = record.FILTER
 			if filter == []:
 				filter = "PASS"
+			else:
+				filter = filter[0]
 			validated_matrix.append([chromosome, position, filter])
+		# print validated_matrix
 		validated_matrix = np.asarray(validated_matrix)
 		return validated_matrix
+
 
 class VariantParser(object):
 
